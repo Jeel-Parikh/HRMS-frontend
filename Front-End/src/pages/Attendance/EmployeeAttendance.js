@@ -9,7 +9,27 @@ import { apiservice } from "service/apiservice";
 import { USERS } from 'service/url_helper'
 
 function Attendance() {
-    const [users, setUsers] = useState();
+    const [users, setUser] = useState();
+
+    let data;
+    useEffect(() => {
+        
+        console.log("In Use Effect",localStorage.getItem('token'));
+        apiservice.callServiceGet(USERS)
+          .then((user) => {
+
+            console.log("Users are",user.data.result);
+            setUser(user.data.result)
+          })
+          .catch((e) => { console.log(e) })
+    
+      });
+    
+    let user = localStorage.getItem('user');
+    console.log("current user is",user);
+    console.log("Users is ",users);
+
+    // const [users, setUsers] = useState();
     const columns = useMemo(
         () => [
             {
@@ -24,20 +44,26 @@ function Attendance() {
             },
             {
                 Header: 'Designation',
-                accessor: 'desgination'
+                accessor: 'designation'
             },
+            {
+                Header:'email address',
+                accessor:'email'
+            }
         ],
         []
     );
 
-    const data = [
+     data = [
         {
             "name": "horn-od926",
-            "designation": "admin"
+            "designation": "admin",
+            "email":"a@b.com"
         },
         {
             "name": "heart-nff6w",
-            "designation": 'employee'
+            "designation": 'employee',
+            "email":'b@a.com'
 
         },
         // {
@@ -121,20 +147,21 @@ function Attendance() {
         //     "status": "relationship"
         // }
     ];
+    // data = users;
 
 
     //meta title
     document.title = "Attendance | HRMS";
-    useEffect(() => {
-        console.log(localStorage.getItem('token'));
-        apiservice.callServiceGet(USERS)
-            .then((user) => {
-                console.log(user.data.result);
-                setUsers(user.data.result)
-            })
-            .catch((e) => { console.log(e) })
+    // useEffect(() => {
+    //     console.log(localStorage.getItem('token'));
+    //     apiservice.callServiceGet(USERS)
+    //         .then((user) => {
+    //             console.log(user.data.result);
+    //             setUsers(user.data.result)
+    //         })
+    //         .catch((e) => { console.log(e) })
 
-    }, [])
+    // }, [])
 
 
     return (
@@ -142,9 +169,10 @@ function Attendance() {
             <div className="container-fluid">
                 <Breadcrumbs title="Tables" breadcrumbItem="Data Tables" />
                 {/* <Table columns={columns} data={data} /> */}
+            
                 <TableContainer
                     columns={columns}
-                    data={data}
+                    data={users}
                     isGlobalFilter={true}
                     isAddOptions={true}
                     customPageSize={10}
